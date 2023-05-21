@@ -47,3 +47,41 @@ class Trajectory:
         self.points.insert(0, pos)
         self.points = self.points[:self.maxPoints]
         self.cloud.points = o3d.utility.Vector3dVector(self.points)
+
+# Wrapper around Open3D point cloud, which helps updating its world pose.
+class PointCloud:
+    def __init__(self, keyFrame, voxelSize, colorOnly, cameraPose):
+        self.status = Status.NEW
+        self.camToWorld = cameraPose
+        self.cloud = self.__getKeyFramePointCloud(keyFrame, voxelSize, colorOnly)
+
+    def __getKeyFramePointCloud(self, keyFrame, voxelSize, colorOnly):
+        cloud = o3d.geometry.PointCloud()
+        cloud.points = o3d.utility.Vector3dVector(keyFrame.pointCloud.getPositionData())
+
+        if keyFrame.pointCloud.hasColors():
+            colors = keyFrame.pointCloud.getRGB24Data() * 1./255
+            cloud.colors = o3d.utility.Vector3dVector(colors)
+
+        if keyFrame.pointCloud.hasNormals():
+            cloud.normals = o3d.utility.Vector3dVector(keyFrame.pointCloud.getNormalData())
+
+        if cloud.has_colors() and colorOnly:
+            # Filter points without color
+            colors = np.asarray(cloud.colors)
+            pointsWithColor = []
+            for i in range(len(colors)):
+                if colors[i, :].any():
+                    pointsWithColor.append(i)
+            cloud = cloud.select_by_index(pointsWithColor)
+
+        if voxelSize > 0:
+            cloud = cloud.voxel_down_sample(voxelSize)
+
+        return cloud
+
+    def updateWorldPose(self, camToWorld):
+        prevWorldToCam = invert_se3(self.camToWorld)
+        prevToCurrent = np.matmul(camToWorld, prevWorldToCam)
+        self.cloud.transform(prevToCurrent)
+        self.camToWorld = camToWorld
