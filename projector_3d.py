@@ -24,7 +24,10 @@ class PointCloudVisualizer():
         origin = o3d.geometry.TriangleMesh.create_coordinate_frame(size=0.3, origin=[0, 0, 0])
         self.vis.add_geometry(origin)
         view_control = self.vis.get_view_control()
-        view_control.set_constant_z_far(1000)
+
+        # TBD::
+        # view_control.set_constant_z_far(1000)
+        
         self.isstarted = False
 
     def rgbd_to_projection(self, depth_map, rgb, downsample = True, remove_noise = False):

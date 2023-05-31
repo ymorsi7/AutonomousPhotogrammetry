@@ -112,10 +112,8 @@ class HostSync:
                         break
             return synced
         return False
-
-
+    
 with dai.Device(pipeline) as device:
-
     device.setIrLaserDotProjectorBrightness(1200)
     qs = []
     qs.append(device.getOutputQueue("depth", maxSize=1, blocking=False))
