@@ -1,11 +1,9 @@
-#!/usr/bin/env python3
-
 import time
 from sys import maxsize
-
 import cv2
 import depthai as dai
 import open3d as o3d
+import csv
 
 COLOR = True
 
@@ -100,8 +98,8 @@ class HostSync:
                 if msg.getSequenceNum() == obj["seq"]:
                     synced[name] = obj["msg"]
                     break
-        # If there are 5 (all) synced msgs, remove all old msgs
-        # and return synced msgs
+
+
         if len(synced) == 4:  # color, left, right, depth, nn
             # Remove old msgs
             for name, arr in self.arrays.items():
@@ -112,7 +110,8 @@ class HostSync:
                         break
             return synced
         return False
-    
+
+
 with dai.Device(pipeline) as device:
     device.setIrLaserDotProjectorBrightness(1200)
     qs = []
@@ -125,7 +124,7 @@ with dai.Device(pipeline) as device:
         from projector_3d import PointCloudVisualizer
     except ImportError as e:
         raise ImportError(
-            f"\033[1;5;31mError occured when importing PCL projector: {e}. Try disabling the point cloud \033[0m "
+            f"\033[1;5;31mError occurred when importing PCL projector: {e}. Try disabling the point cloud.\033[0m "
         )
 
     calibData = device.readCalibration()
@@ -140,6 +139,14 @@ with dai.Device(pipeline) as device:
     serial_no = device.getMxId()
     sync = HostSync()
     depth_vis, color, rect_left, rect_right = None, None, None, None
+
+    csv_filename = f"{serial_no}_{timestamp}_pointcloud.csv"
+    csv_file = open(csv_filename, 'w', newline='')
+    csv_writer = csv.writer(csv_file)
+
+
+    header_row = ['x', 'y', 'z']
+    csv_writer.writerow(header_row)
 
     while True:
         for q in qs:
@@ -162,6 +169,14 @@ with dai.Device(pipeline) as device:
                     pcl_converter.rgbd_to_projection(depth, rgb)
                     pcl_converter.visualize_pcd()
 
+
+                    point_cloud_array = pcl_converter.pcl.to_array()
+
+
+                    for point in point_cloud_array:
+                        x, y, z = point
+                        csv_writer.writerow([x, y, z])
+
         key = cv2.waitKey(1)
         if key == ord("s"):
             timestamp = str(int(time.time()))
@@ -170,5 +185,16 @@ with dai.Device(pipeline) as device:
             cv2.imwrite(f"{serial_no}_{timestamp}_rectified_left.png", rectified_left)
             cv2.imwrite(f"{serial_no}_{timestamp}_rectified_right.png", rectified_right)
             o3d.io.write_point_cloud(f"{serial_no}_{timestamp}.pcd", pcl_converter.pcl, compressed=True)
+
+            csv_file.close()
+
+            csv_filename = f"{serial_no}_{timestamp}_pointcloud.csv"
+            csv_file = open(csv_filename, 'w', newline='')
+            csv_writer = csv.writer(csv_file)
+
+            header_row = ['x', 'y', 'z']
+            csv_writer.writerow(header_row)
         elif key == ord("q"):
             break
+
+    csv_file.close()
