@@ -16,6 +16,7 @@ def run_motor_using_with():
             time.sleep(0.1)
             print(motor.get_measurements().rpm)
         motor.set_rpm(0)
+    motor.stop_heartbeat()
 
 
 # a function to show how to use the class as a static object.
@@ -34,15 +35,14 @@ def run_motor_as_object():
 
 
 # a function to show how to use the class as a static object.
-def run_motor_as_object():
+def servo_set_position(value):
     motor = VESC(serial_port=serial_port)
     print("Firmware: ", motor.get_firmware_version())
 
     # sweep servo through full range
+    print("{}".format(value))
     
-    motor.set_servo(0)
-    time.sleep(0.01)
-    motor.set_servo(100)
+    motor.set_servo(value)
 
     # IMPORTANT: YOU MUST STOP THE HEARTBEAT IF IT IS RUNNING BEFORE IT GOES OUT OF SCOPE. Otherwise, it will not
     #            clean-up properly.
@@ -59,7 +59,15 @@ def time_get_values():
 
 
 if __name__ == '__main__':
-    #run_motor_using_with()
-    run_motor_as_object()
+    run_motor_using_with()
+    #run_motor_as_object()
     #time_get_values()
+    
+    """
+    servo_set_position(100/100)
+    time.sleep(1)
+
+    servo_set_position(1/100)
+    """
+    
 
