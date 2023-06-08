@@ -1,0 +1,4 @@
+crccheck==1.3.0
+pycrc==0.10.0
+pythoncrc==1.21
+pyvesc==1.0.5
