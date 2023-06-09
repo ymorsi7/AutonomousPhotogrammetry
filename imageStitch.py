@@ -29,7 +29,7 @@ file_names = sorted(os.listdir(image_directory), key=lambda x: int(x.split(".")[
 panoImages = [os.path.join(image_directory, filename) for filename in file_names]
 
 merged_image = merge_images(panoImages)
-merged_image.show()
+# merged_image.show()
 
 # Create the 'Pano' directory if it doesn't exist
 output_directory = "Pano"
