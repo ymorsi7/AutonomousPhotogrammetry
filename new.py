@@ -6,7 +6,7 @@ import struct
 import depthai
 import cv2
 import time
-
+import os
 from board import SCL, SDA
 import busio
 
@@ -42,8 +42,8 @@ servo_tilt = servo.Servo(pca.channels[1])
 
 # We sleep in the loops to give the servo time to move into position.
 count = 0
-
-for i in range(0,180,20):
+save_folder = '/home/jetson/AutonomousPhotogrammetry/imgT'
+for i in range(0,180,10):
     servo7.angle = i
     time.sleep(0.03)
     with depthai.Device(pipeline) as device:
@@ -63,7 +63,9 @@ for i in range(0,180,20):
 
         # Save the frame as an image file with a unique name
         filename = "image_{}.jpg".format(count)
-        cv2.imwrite(filename, frame)
+        save_path = os.path.join(save_folder, filename)
+        cv2.imwrite(save_path, frame)
+        #cv2.imwrite(filename, frame)
         print(f"Saved {filename}")
 
         # Increment the counter
