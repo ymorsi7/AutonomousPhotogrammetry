@@ -54,4 +54,7 @@ if status == cv2.Stitcher_OK:
     print("Images deleted successfully")
 else:
     print("Error during stitching")
+<<<<<<< HEAD
 
+=======
+>>>>>>> ca2026186876762dbc5edd05f31514cca057ab2d
