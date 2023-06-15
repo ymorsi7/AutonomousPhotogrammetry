@@ -45,37 +45,8 @@ servo_tilt = 100
 
 # We sleep in the loops to give the servo time to move into position.
 count = 0
-save_folder = '/home/jetson/AutonomousPhotogrammetry/imgT'
-for i in range(0,180,10):
-    servo7.angle = i
-    #time.sleep(0.005)
-    with depthai.Device(pipeline) as device:
-    # Get the output queue for the preview stream
-        q = device.getOutputQueue("preview", maxSize=1, blocking=True)
-
-    # Counter for image filenames
-        #count = 0
-        # Get the preview frame
-        data = q.get()
-
-        # Get the frame from the data packet
-        frame = data.getCvFrame()
-
-        # Display the frame
-       # cv2.imshow("Preview", frame)
-
-        # Save the frame as an image file with a unique name
-        filename = "image_{}.jpg".format(count)
-        save_path = os.path.join(save_folder, filename)
-        cv2.imwrite(save_path, frame)
-        #cv2.imwrite(filename, frame)
-        print(f"Saved {filename}")
-
-        # Increment the counter
-        count += 1
-
-try: 
-    pca.deinit()
-except:
-    time.sleep(1)
-    pca.deinit()
+servo7.angle = 0
+time.sleep(1)
+servo7.angle = 180
+time.sleep(1)
+servo7.angle = 0

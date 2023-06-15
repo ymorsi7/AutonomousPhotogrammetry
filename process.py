@@ -3,9 +3,10 @@ import subprocess
 # Run the first script, collecting the images
 subprocess.run(['python', 'new.py'])
 
+# Run the second script
+subprocess.run(['python', 'c.py'])
+
 for i in range(3):
-    # Run the second script
-    subprocess.run(['python', 'c.py'])
 
     subprocess.run(['python', '/home/jetson/AutonomousPhotogrammetry/pvescOG/edit.py'])
 
@@ -13,4 +14,6 @@ for i in range(3):
 
     subprocess.run(['python', 'c.py'])
 
-print("program run")
+subprocess.run(['python', 'victory.py'])
+
+print("program ended")
