@@ -10,14 +10,29 @@ def run_motor_using_with():
     with VESC(serial_port=serial_port) as motor:
         time.sleep(1) # timer to give enough time to initialize
         print("Firmware: ", motor.get_firmware_version())
-        motor.set_duty_cycle(.07)
 
-        # run motor and print out rpm for ~2 seconds
-        for i in range(30):
+        motor.set_duty_cycle(.025)
+        for i in range(10):
             time.sleep(0.1)
             measurements = motor.get_measurements()
             if measurements is not None:
                 print(measurements.rpm)
+
+        motor.set_duty_cycle(.045)
+        # run motor and print out rpm for ~2 seconds
+        for i in range(10):
+            time.sleep(0.1)
+            measurements = motor.get_measurements()
+            if measurements is not None:
+                print(measurements.rpm)
+
+        motor.set_duty_cycle(.025)
+        for i in range(10):
+            time.sleep(0.1)
+            measurements = motor.get_measurements()
+            if measurements is not None:
+                print(measurements.rpm)
+
         motor.set_rpm(0)
     motor.stop_heartbeat()
 
@@ -62,6 +77,7 @@ def time_get_values():
 
 
 if __name__ == '__main__':
-    run_motor_using_with()
+    #servo_set_position(0.45)
+    run_motor_using_with() 
     #run_motor_as_object()
     #time_get_values()

@@ -36,25 +36,21 @@ if status == cv2.Stitcher_OK:
     panorama = cv2.bitwise_and(panorama, panorama, mask=mask)
 
     # Check if "panorama.jpg" exists
-    existing_filename = "panorama.jpg"
-    new_filename = "panorama_new.jpg"
+    existing_filename = "pano1.jpg"
+    new_filename = "pano1.jpg"
     if os.path.exists(existing_filename):
-        i = 1
+        i = 2
         while os.path.exists(new_filename):
-            new_filename = f"panorama_new_{i}.jpg"
+            new_filename = f"pano{i}.jpg"
             i += 1
 
     # Save the stitched panorama image
     cv2.imwrite(new_filename, panorama)
     print(f"Panorama image saved as {new_filename}")
-
+    
     # Delete the images stored in the imgT folder
     for filename in glob.glob(image_folder + '*.jpg'):
-        os.remove(filename)
+       os.remove(filename)
     print("Images deleted successfully")
 else:
     print("Error during stitching")
-<<<<<<< HEAD
-
-=======
->>>>>>> ca2026186876762dbc5edd05f31514cca057ab2d

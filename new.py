@@ -40,12 +40,15 @@ pca.frequency = 50
 servo7 = servo.Servo(pca.channels[0])
 servo_tilt = servo.Servo(pca.channels[1])
 
+# setting the tilt servo to position
+servo_tilt = 100
+
 # We sleep in the loops to give the servo time to move into position.
 count = 0
 save_folder = '/home/jetson/AutonomousPhotogrammetry/imgT'
 for i in range(0,180,10):
     servo7.angle = i
-    time.sleep(0.03)
+    time.sleep(0.005)
     with depthai.Device(pipeline) as device:
     # Get the output queue for the preview stream
         q = device.getOutputQueue("preview", maxSize=1, blocking=True)
@@ -71,43 +74,4 @@ for i in range(0,180,10):
         # Increment the counter
         count += 1
 
-# Destroy OpenCV windows
-        #cv2.destroyAllWindows()
-for i in range(180):
-    servo7.angle = 180 - i
-    time.sleep(0.03)
-"""
-# You can also specify the movement fractionally.
-fraction = 0.0
-while fraction < 1.0:
-    servo7.fraction = fraction
-    fraction += 0.01
-    time.sleep(0.03)
-"""
-
-infile_path = "/dev/input/js0"
-EVENT_SIZE = struct.calcsize("LhBB")
-file = open(infile_path, "rb")
-event = file.read(EVENT_SIZE)
-
-# setting tilt servo down
-servo_tilt.angle = 120
-
-while event:
-    print(struct.unpack("LhBB", event))
-    #(tv_sec, tv_usec, type, code, value) = struct.unpack("LhBB", event)
-    (tv_msec,  value, type, number) = struct.unpack("LhBB",event) 
-    event = file.read(EVENT_SIZE)
-    # if A button is pressed toggle view
-    if number == 0:
-        if type == 1:
-            if value == 1:
-                servo7.angle = 0
-            if value == 0:
-                servo7.angle = 180 
-    # if B button is pressed exit program
-    if number == 1:
-        if type == 1:
-            if value == 1:
-                break
 pca.deinit()
